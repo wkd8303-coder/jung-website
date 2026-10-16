@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>선비를 가려내라</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Batang:wght@400;700&display=swap">
+<style>
+:root{
+  --desk:#22303b; --desk-2:#2c3d4a; --desk-line:rgba(239,230,210,.12);
+  --paper:#efe6d2; --paper-2:#e3d6b9; --paper-edge:#c9b68f;
+  --ink:#231c15; --ink-soft:#5d5143;
+  --chrome:#f1e9d8; --chrome-dim:rgba(241,233,216,.68);
+  --hungu:#2c4a72; --sarim:#a8341f; --gold:#c39a3e;
+  --ok:#2e6a43; --ng:#9a2b1c;
+  --scrim:rgba(10,14,18,.66); --focus:#f0bf4c;
+  --f-disp:"Song Myung","Gowun Batang","Batang",serif;
+  --f-body:"Gowun Batang","Batang","AppleMyungjo","Noto Serif KR",serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --desk:#121a21; --desk-2:#1a252e; --desk-line:rgba(239,230,210,.09);
+    --paper:#d9cfb8; --paper-edge:#a8977a;
+    --paper-2:#cbbfa3;
+    --chrome:#ece3d0; --chrome-dim:rgba(236,227,208,.62);
+    --hungu:#2a4670; --sarim:#a1321e; --scrim:rgba(0,0,0,.74);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#121a21; --desk-2:#1a252e; --desk-line:rgba(239,230,210,.09);
+  --paper:#d9cfb8; --paper-2:#cbbfa3; --paper-edge:#a8977a;
+  --chrome:#ece3d0; --chrome-dim:rgba(236,227,208,.62);
+  --hungu:#2a4670; --sarim:#a1321e; --scrim:rgba(0,0,0,.74);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  height:100%;margin:0;background:var(--desk);color:var(--chrome);
+  font:16px/1.6 var(--f-body);
+  background-image:repeating-linear-gradient(90deg,transparent 0 46px,var(--desk-line) 46px 47px);
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{max-width:560px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:12px 14px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.hidden{display:none!important}
+
+/* 공통 */
+.btn{border:0;border-radius:6px;padding:12px 18px;min-height:46px;font-weight:700;background:var(--paper);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--chrome);border:1px solid var(--chrome-dim)}
+.btn.primary{background:var(--gold);color:#1d160c}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.muted{color:var(--chrome-dim)}
+.small{font-size:13px}
+
+/* 시작 화면 */
+.title-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;padding:10px 4px}
+.title{font-family:var(--f-disp);font-weight:400;font-size:clamp(46px,14vw,74px);line-height:1.02;margin:0;letter-spacing:-.01em}
+.title span{display:block}
+.title .sub-han{font-size:.34em;color:var(--gold);letter-spacing:.3em;margin-top:10px}
+.lede{margin:0;max-width:34em;color:var(--chrome-dim)}
+.decree{background:var(--paper);color:var(--ink);border-radius:4px;padding:18px 18px 16px;box-shadow:0 12px 28px rgba(0,0,0,.35);position:relative}
+.decree h2{font-family:var(--f-disp);font-weight:400;font-size:22px;margin:0 0 4px}
+.decree label{display:block;font-size:14px;color:var(--ink-soft);margin-bottom:8px}
+.decree input{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:1px solid var(--paper-edge);border-radius:4px;background:#fffaf0;color:var(--ink)}
+.decree .err{color:var(--ng);font-size:14px;min-height:1.4em;margin:6px 0 2px}
+.decree .btn{width:100%;background:var(--ink);color:var(--paper);margin-top:4px}
+.start-meta{font-size:13px;color:var(--ink-soft);margin-top:10px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:12px}
+.icon-btn{background:transparent;border:1px solid var(--chrome-dim);border-radius:6px;min-width:46px;min-height:46px;padding:0 12px}
+.test-banner{background:var(--gold);color:#1d160c;font-size:13px;text-align:center;padding:6px 10px;border-radius:4px;margin-bottom:8px}
+
+/* 브리핑 */
+.brief{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.brief .decree{text-align:left}
+.brief dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:12px 0 0;font-size:15px}
+.brief dt{color:var(--ink-soft)}
+.brief dd{margin:0;font-weight:700}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.legend div{border-left:4px solid;padding:4px 10px;font-size:14px;line-height:1.5}
+.legend .h{border-color:var(--hungu)}
+.legend .s{border-color:var(--sarim)}
+.legend b{display:block;font-family:var(--f-disp);font-weight:400;font-size:18px}
+
+/* 심사 화면 */
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin-bottom:10px}
+.hud div{background:var(--desk-2);border-radius:6px;padding:6px 2px}
+.hud small{display:block;font-size:11px;color:var(--chrome-dim)}
+.hud b{font-size:18px;font-variant-numeric:tabular-nums}
+.hud .warn b{color:#ff9d7a}
+.bonus-line{font-size:13px;color:var(--chrome-dim);text-align:center;margin:-4px 0 8px;min-height:1.5em}
+.bonus-line .ev{color:var(--gold)}
+.stage{flex:1;min-height:0;position:relative;display:flex}
+.doc{
+  flex:1;background:var(--paper);color:var(--ink);border-radius:3px;padding:18px 18px 14px;
+  box-shadow:0 2px 0 rgba(0,0,0,.2),0 14px 30px rgba(0,0,0,.4);
+  display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden;
+  background-image:radial-gradient(circle at 20% 10%,rgba(255,255,255,.35),transparent 60%);
+}
+.doc.leave{transition:transform .38s ease-in,opacity .38s ease-in;transform:translateX(120%) rotate(8deg);opacity:0}
+.doc.enter{animation:enter .32s ease-out}
+@keyframes enter{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.doc-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:12px}
+.doc-head h3{font-family:var(--f-disp);font-weight:400;font-size:26px;margin:0}
+.doc-head span{font-size:13px;color:var(--ink-soft)}
+.doc-body{flex:1;overflow:auto;padding-right:4px}
+.applicant{font-size:15px;color:var(--ink-soft);margin:0 0 10px}
+.applicant b{font-family:var(--f-disp);font-weight:400;font-size:22px;color:var(--ink);margin-right:6px}
+.field{display:grid;grid-template-columns:4.6em 1fr;gap:10px;padding:9px 0;border-bottom:1px dashed var(--paper-edge)}
+.field:last-child{border-bottom:0}
+.field dt{font-size:13px;color:var(--ink-soft);padding-top:2px}
+.field dd{margin:0;font-size:16px;line-height:1.55}
+.letter{font-size:17px;line-height:1.85;white-space:pre-line;margin:6px 0 12px}
+.letter .sign{display:block;text-align:right;color:var(--ink-soft);font-size:15px;margin-top:8px}
+.speech{font-size:17px;line-height:1.75;border-left:3px solid var(--paper-edge);padding-left:12px;margin:4px 0 12px}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;border-top:1px solid var(--paper-edge);margin-top:8px}
+.pager button{background:var(--paper-2);color:var(--ink);border:0;border-radius:4px;min-width:64px;min-height:42px}
+.pager button:disabled{opacity:.35}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--paper-edge)}
+.dots i.on{background:var(--ink)}
+.seal{
+  position:absolute;left:50%;top:44%;width:150px;height:150px;margin:-75px 0 0 -75px;pointer-events:none;
+  border:7px double currentColor;border-radius:10px;display:grid;place-items:center;
+  font-family:var(--f-disp);font-size:58px;line-height:1;opacity:0;transform:scale(1.7) rotate(-14deg);
+  mix-blend-mode:multiply;
+}
+.seal.h{color:var(--hungu)} .seal.s{color:var(--sarim)}
+.seal.show{animation:stamp .26s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stamp{to{opacity:.88;transform:scale(1) rotate(-9deg)}}
+.verdict{position:absolute;left:12px;right:12px;bottom:12px;border-radius:6px;padding:10px 12px;color:#fff;font-size:15px;opacity:0;transform:translateY(8px);transition:.2s}
+.verdict.show{opacity:1;transform:none}
+.verdict.ok{background:var(--ok)} .verdict.ng{background:var(--ng)}
+.tray{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:12px}
+.stamp{
+  border:0;border-radius:10px;min-height:76px;display:flex;align-items:center;justify-content:center;gap:12px;
+  color:#fff;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s
+}
+.stamp:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.stamp.h{background:var(--hungu)} .stamp.s{background:var(--sarim)}
+.stamp .glyph{font-family:var(--f-disp);font-size:36px;width:52px;height:52px;border:3px solid rgba(255,255,255,.75);border-radius:6px;display:grid;place-items:center;line-height:1}
+.stamp:disabled{opacity:.6}
+.hint-keys{text-align:center;font-size:12px;color:var(--chrome-dim);margin-top:6px}
+
+/* 결과 */
+.result{flex:1;overflow:auto;padding-bottom:10px}
+.result h2{font-family:var(--f-disp);font-weight:400;font-size:30px;margin:6px 0 2px}
+.big-score{font-family:var(--f-disp);font-size:68px;line-height:1;color:var(--gold);margin:8px 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
+.stats div{background:var(--desk-2);border-radius:6px;padding:10px 12px}
+.stats small{display:block;color:var(--chrome-dim);font-size:12px}
+.stats b{font-size:20px}
+.save-msg{font-size:14px;padding:10px 12px;border-radius:6px;background:var(--desk-2);margin:8px 0}
+.section-t{font-family:var(--f-disp);font-weight:400;font-size:22px;margin:22px 0 8px}
+.review{background:var(--paper);color:var(--ink);border-radius:4px;padding:14px;margin-bottom:10px}
+.review h4{margin:0 0 6px;font-size:16px}
+.review .tag{display:inline-block;color:#fff;font-size:12px;border-radius:3px;padding:1px 7px;margin-left:4px;vertical-align:2px}
+.review .tag.h{background:var(--hungu)} .review .tag.s{background:var(--sarim)}
+.review ul{margin:6px 0 0;padding-left:1.1em;font-size:14.5px;line-height:1.6}
+.review li{margin-bottom:5px}
+.review li span{color:var(--ink-soft)}
+.perfect{color:var(--chrome-dim)}
+.res-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:10px}
+
+/* 모달 */
+.modal{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:30;padding:env(safe-area-inset-top,0px) 0 0}
+.modal.hidden{display:none}
+.sheet{background:var(--paper);color:var(--ink);width:100%;max-width:560px;max-height:88%;overflow:auto;border-radius:12px 12px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+@media (min-width:600px){.modal{align-items:center}.sheet{border-radius:10px;padding-bottom:18px}}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sheet-head h3{font-family:var(--f-disp);font-weight:400;font-size:24px;margin:0}
+.x{background:transparent;border:0;font-size:26px;min-width:44px;min-height:44px;color:var(--ink)}
+.sheet .btn{background:var(--ink);color:var(--paper)}
+.sheet .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink-soft)}
+.sheet label{display:block;font-size:14px;color:var(--ink-soft);margin:12px 0 6px}
+.sheet input[type=text],.sheet input[type=password],.sheet select{width:100%;font:inherit;padding:10px;border:1px solid var(--paper-edge);border-radius:4px;background:#fffaf0;color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--paper-edge);background:#fffaf0;color:var(--ink);border-radius:4px;min-height:40px;padding:0 12px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--paper-edge)}
+.toggle input{width:24px;height:24px}
+.hof{width:100%;border-collapse:collapse;font-size:15px}
+.hof th{text-align:left;font-size:12px;color:var(--ink-soft);font-weight:400;padding:4px 6px;border-bottom:1px solid var(--paper-edge)}
+.hof td{padding:8px 6px;border-bottom:1px dashed var(--paper-edge);font-variant-numeric:tabular-nums}
+.hof tr.me td{background:rgba(195,154,62,.22)}
+.hof td:first-child{font-family:var(--f-disp);font-size:18px;width:2.4em}
+.tbl-wrap{overflow-x:auto}
+.note{font-size:13px;color:var(--ink-soft);margin-top:10px}
+.bal{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.bal th,.bal td{padding:6px;border-bottom:1px dashed var(--paper-edge);text-align:right}
+.bal th:first-child,.bal td:first-child{text-align:left}
+.err-t{color:var(--ng);font-size:14px;min-height:1.4em}
+
+/* 사건 */
+.event{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-140%);z-index:40;
+  background:var(--gold);color:#1d160c;border-radius:8px;padding:12px 16px;width:min(92%,480px);box-shadow:0 10px 24px rgba(0,0,0,.4);transition:transform .35s ease,visibility 0s .35s;visibility:hidden}
+.event.show{transform:translate(-50%,0);visibility:visible;transition:transform .35s ease}
+.event b{font-family:var(--f-disp);font-weight:400;font-size:19px;display:block}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="testBanner" class="test-banner hidden">테스트 모드: 이 기록은 명예의 전당에 올라가지 않습니다</div>
+
+  <!-- 시작 -->
+  <section id="scrStart" class="screen on" aria-label="시작">
+    <div class="title-wrap">
+      <h1 class="title"><span>선비를</span><span>가려내라</span><span class="sub-han">勳舊 · 士林</span></h1>
+      <p class="lede">성종 대 인재 선발소. 추천서와 이력, 면담 기록을 읽고 지원자가 훈구인지 사림인지 도장을 찍으세요.</p>
+      <div class="decree">
+        <h2>주상의 어명</h2>
+        <label for="nameIn">심사관의 학번 다섯 자리와 이름을 띄어 쓰시오</label>
+        <input id="nameIn" type="text" inputmode="text" autocomplete="off" placeholder="예) 20314 홍길동" maxlength="20">
+        <div id="nameErr" class="err" role="alert"></div>
+        <button id="startBtn" class="btn">심사 시작</button>
+        <div id="startMeta" class="start-meta">일반 모드: 제한 시간 5분, 최대 35명, 명예의 전당 기록</div>
+      </div>
+    </div>
+    <div class="foot">
+      <button id="hofBtn" class="btn ghost">명예의 전당</button>
+      <div class="row">
+        <button id="setBtn" class="icon-btn" aria-label="설정">⚙</button>
+        <button id="teachBtn" class="icon-btn" aria-label="교사용 메뉴">교사</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 브리핑 -->
+  <section id="scrBrief" class="screen" aria-label="오늘의 심사">
+    <div class="brief">
+      <div class="decree">
+        <h2>오늘의 심사</h2>
+        <dl>
+          <dt>심사관</dt><dd id="bName"></dd>
+          <dt>지원자</dt><dd id="bCount"></dd>
+          <dt>제한 시간</dt><dd id="bTime"></dd>
+          <dt>난이도</dt><dd id="bDiff"></dd>
+          <dt>심사번호</dt><dd id="bSeed"></dd>
+        </dl>
+        <div class="legend">
+          <div class="h"><b>훈구</b>공신·왕실 외척, 중앙 고위직, 대농장, 문장(사장) 중시, 부국강병</div>
+          <div class="s"><b>사림</b>영남 향촌 중소지주, 김종직 학통, 『소학』·향약, 왕도정치, 언관(3사)</div>
+        </div>
+        <p class="start-meta">정답 100점, 빨리 판정할수록 최대 50점 추가, 연속 정답마다 10점씩(최대 50점) 추가. 단서는 세 장의 서류에 흩어져 있습니다.</p>
+        <button id="goBtn" class="btn">심사 개시</button>
+      </div>
+      <button id="briefBack" class="btn ghost">처음으로</button>
+    </div>
+  </section>
+
+  <!-- 심사 -->
+  <section id="scrPlay" class="screen" aria-label="심사">
+    <div class="hud">
+      <div><small>점수</small><b id="hScore">0</b></div>
+      <div id="hTimeBox"><small>남은 시간</small><b id="hTime">5:00</b></div>
+      <div><small>심사</small><b id="hCount">1/35</b></div>
+      <div><small>연속</small><b id="hStreak">0</b></div>
+    </div>
+    <div id="bonusLine" class="bonus-line"></div>
+    <div class="stage">
+      <article id="doc" class="doc" aria-live="polite">
+        <div class="doc-head"><h3 id="docTitle"></h3><span id="docSub"></span></div>
+        <div id="docBody" class="doc-body"></div>
+        <div class="pager">
+          <button id="prevPg" aria-label="이전 서류">◀ 이전</button>
+          <div id="dots" class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <button id="nextPg" aria-label="다음 서류">다음 ▶</button>
+        </div>
+        <div id="seal" class="seal" aria-hidden="true"></div>
+        <div id="verdict" class="verdict" role="status"></div>
+      </article>
+    </div>
+    <div class="tray">
+      <button id="stampH" class="stamp h"><span class="glyph">勳</span>훈구</button>
+      <button id="stampS" class="stamp s"><span class="glyph">士</span>사림</button>
+    </div>
+    <div class="hint-keys">키보드: H 훈구 · S 사림 · ←/→ 서류 넘기기</div>
+  </section>
+
+  <!-- 결과 -->
+  <section id="scrResult" class="screen" aria-label="심사 결과">
+    <div class="result">
+      <h2>심사 결과</h2>
+      <div id="rWho" class="muted small"></div>
+      <div id="rScore" class="big-score">0</div>
+      <div id="rSave" class="save-msg hidden"></div>
+      <div class="stats">
+        <div><small>정답</small><b id="rCorrect"></b></div>
+        <div><small>정확도</small><b id="rAcc"></b></div>
+        <div><small>최고 연속</small><b id="rStreak"></b></div>
+        <div><small>평균 판정 시간</small><b id="rAvg"></b></div>
+      </div>
+      <h3 class="section-t">이번 심사의 하이라이트</h3>
+      <div id="rHigh" class="small"></div>
+      <h3 class="section-t">오답 복기</h3>
+      <div id="rReview"></div>
+    </div>
+    <div class="res-actions">
+      <button id="againBtn" class="btn primary">다시 도전</button>
+      <button id="homeBtn" class="btn ghost">처음으로</button>
+    </div>
+    <button id="rHofBtn" class="btn ghost" style="margin-top:10px">명예의 전당 보기</button>
+  </section>
+</div>
+
+<!-- 명예의 전당 -->
+<div id="mHof" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="hofT">
+  <div class="sheet">
+    <div class="sheet-head"><h3 id="hofT">명예의 전당 TOP 20</h3><button class="x" data-close aria-label="닫기">×</button></div>
+    <div id="hofBody" class="tbl-wrap"></div>
+    <div class="row" style="margin-top:12px"><button id="hofRefresh" class="btn ghost">새로고침</button></div>
+    <p id="hofNote" class="note"></p>
+  </div>
+</div>
+
+<!-- 설정 -->
+<div id="mSet" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="setT">
+  <div class="sheet">
+    <div class="sheet-head"><h3 id="setT">설정</h3><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="toggle"><span>효과음</span><input id="optSfx" type="checkbox"></div>
+    <div class="toggle"><span>진동 (지원 기기만)</span><input id="optVib" type="checkbox"></div>
+    <div class="toggle"><span>화면 테마</span>
+      <select id="optTheme" style="width:auto"><option value="">기기 설정</option><option value="light">밝게</option><option value="dark">어둡게</option></select>
+    </div>
+    <p class="note">이 설정은 지금 쓰는 기기에만 저장됩니다.</p>
+    <div class="row" style="margin-top:10px"><button id="setOk" class="btn">확인</button></div>
+  </div>
+</div>
+
+<!-- 교사용 -->
+<div id="mTeach" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="teachT">
+  <div class="sheet">
+    <div class="sheet-head"><h3 id="teachT">교사용 메뉴</h3><button class="x" data-close aria-label="닫기">×</button></div>
+    <div id="tLock">
+      <label for="tPw">교사 비밀번호</label>
+      <input id="tPw" type="password" autocomplete="off">
+      <div id="tPwErr" class="err-t" role="alert"></div>
+      <button id="tOpen" class="btn">열기</button>
+    </div>
+    <div id="tPanel" class="hidden">
+      <label>지원자 수</label>
+      <div class="seg" data-key="count"><button data-v="5">5</button><button data-v="10">10</button><button data-v="15">15</button><button data-v="20">20</button></div>
+      <label>제한 시간</label>
+      <div class="seg" data-key="time"><button data-v="60">60초</button><button data-v="180">180초</button><button data-v="300">300초</button><button data-v="0">없음</button></div>
+      <label>난이도</label>
+      <div class="seg" data-key="diff"><button data-v="mix">혼합</button><button data-v="1">초급</button><button data-v="2">중급</button><button data-v="3">고급</button></div>
+      <label for="tSeed">고정 심사번호 (비우면 무작위, 같은 번호면 모두 같은 지원자)</label>
+      <input id="tSeed" type="text" inputmode="numeric" maxlength="6" placeholder="예) 1469">
+      <div class="row" style="margin-top:14px">
+        <button id="tStart" class="btn">테스트 시작</button>
+        <button id="tNormal" class="btn ghost">일반 모드 복귀</button>
+      </div>
+      <h4 style="margin:22px 0 4px;font-family:var(--f-disp);font-weight:400;font-size:20px">단서 밸런스 검사</h4>
+      <p class="note" style="margin-top:0">난이도별로 지원자 600명을 만들어 훈구·사림 비율과 단서 수를 확인합니다.</p>
+      <button id="tBal" class="btn ghost">검사 실행</button>
+      <div id="tBalOut" class="tbl-wrap"></div>
+      <h4 style="margin:22px 0 4px;font-family:var(--f-disp);font-weight:400;font-size:20px">순위 초기화</h4>
+      <p class="note" style="margin-top:0">명예의 전당 기록을 모두 지웁니다. 되돌릴 수 없습니다.</p>
+      <button id="tReset" class="btn ghost">순위 초기화</button>
+      <div id="tResetMsg" class="err-t"></div>
+    </div>
+  </div>
+</div>
+
+<div id="event" class="event" role="status"><b id="evT"></b><span id="evD"></span></div>
+
+<script>
+/* ===================== 설정값 ===================== */
+// 교사 비밀번호: 필요하면 이 값을 바꾸세요.
+const TEACHER_PASSWORD = "1469";
+const NORMAL = { count: 35, time: 300, diff: "mix" };
+
+/* ===================== 단서 은행 =====================
+ f: H 훈구 / S 사림 / N 중립,  s: 2 뚜렷함 / 1 미묘함
+*/
+const C = {
+  rec: [
+    {f:"H",s:2,t:"영의정 대감 (계유정난 정난공신)",w:"계유정난으로 세조 즉위를 도운 공신은 훈구의 핵심입니다."},
+    {f:"H",s:2,t:"좌익공신에 책봉된 이조판서",w:"세조 즉위 후 책봉된 좌익공신 역시 훈구 세력입니다."},
+    {f:"H",s:1,t:"왕실의 외척인 병조판서",w:"왕실과 혼인으로 맺어진 권세가는 훈구의 특징입니다."},
+    {f:"S",s:2,t:"함양 군수 점필재 김종직",w:"김종직은 성종 때 중앙에 진출한 사림의 영수입니다."},
+    {f:"S",s:1,t:"선산 향교의 교수(敎授)",w:"영남 향촌의 학자는 사림의 기반입니다."},
+    {f:"S",s:1,t:"홍문관 교리",w:"성종은 훈구를 견제하려 사림을 홍문관 등 3사에 등용했습니다."},
+    {f:"N",t:"예조 정랑"},{f:"N",t:"성균관 대사성"},{f:"N",t:"충청도 관찰사"},{f:"N",t:"한성부 판관"}
+  ],
+  reason: [
+    {f:"H",s:1,t:"문장이 화려하여 외교 문서를 짓는 데 비할 자가 없습니다.",w:"훈구는 시문·문장(사장, 詞章)을 중시했습니다."},
+    {f:"H",s:2,t:"선대의 공훈이 크니 그 자손을 마땅히 쓰셔야 합니다.",w:"공신 가문이라는 이유로 등용을 청하는 것은 훈구의 방식입니다."},
+    {f:"H",s:1,t:"법전 편찬과 제도 정비에 밝아 나라 경영에 쓸 만합니다.",w:"『경국대전』 완성 등 제도 정비는 훈구 관학파가 이끌었습니다."},
+    {f:"S",s:2,t:"경학에 깊고 몸가짐이 『소학』의 가르침 그대로입니다.",w:"경학 중시와 『소학』 실천은 사림의 대표 특징입니다."},
+    {f:"S",s:2,t:"의리를 지키고 권세가에 굽히지 않으니 언관으로 쓰십시오.",w:"의리·명분을 앞세우고 언관(3사)으로 진출한 것이 사림입니다."},
+    {f:"S",s:1,t:"고향에서 덕행으로 이름나 고을 사람들이 따릅니다.",w:"향촌 사회에서 신망을 얻은 선비는 사림의 모습입니다."},
+    {f:"N",t:"성품이 온화하고 일 처리가 꼼꼼합니다."},{f:"N",t:"효성이 지극하여 고을에 소문이 났습니다."},{f:"N",t:"글씨가 단정하고 셈에 밝습니다."}
+  ],
+  home: [
+    {f:"H",s:1,t:"한양 북촌, 대궐 가까운 큰 기와집",w:"한양 중심가에 자리 잡은 권세가는 중앙 정계에 기반을 둔 훈구입니다."},
+    {f:"S",s:1,t:"경상도 선산",w:"선산·밀양 등 영남 지역은 사림의 중심 기반입니다."},
+    {f:"S",s:1,t:"경상도 밀양",w:"밀양은 김종직의 고향으로, 영남 사림의 근거지입니다."},
+    {f:"S",s:1,t:"경상도 함양",w:"함양 등 영남 향촌은 사림의 근거지입니다."},
+    {f:"N",t:"충청도 공주"},{f:"N",t:"황해도 해주"},{f:"N",t:"강원도 원주"},{f:"N",t:"전라도 나주"}
+  ],
+  family: [
+    {f:"H",s:2,t:"부친이 좌익공신에 책봉됨",w:"공신 가문은 훈구입니다."},
+    {f:"H",s:2,t:"누이가 종친(왕족)에게 시집감",w:"왕실과의 혼인은 훈구가 권력을 지키던 방법입니다."},
+    {f:"H",s:1,t:"대대로 의정부와 6조의 대신을 배출함",w:"중앙 고위직을 대대로 차지한 가문은 훈구입니다."},
+    {f:"S",s:2,t:"고려에 절의를 지킨 길재의 학통을 잇는 집안",w:"정몽주–길재–김숙자–김종직으로 이어지는 학통이 사림입니다."},
+    {f:"S",s:1,t:"벼슬보다 학문을 숭상해 온 향촌 선비 집안",w:"향촌에서 학문에 힘쓴 중소 지주 가문은 사림입니다."},
+    {f:"N",t:"부친이 현감을 지냄"},{f:"N",t:"형제 셋이 모두 과거를 준비 중"},{f:"N",t:"조부가 무과 출신"}
+  ],
+  study: [
+    {f:"H",s:1,t:"집현전 학사 출신 스승에게 시문을 배움",w:"집현전 출신 다수가 세조 때 공신이 되어 훈구로 자리 잡았고, 시문을 중시했습니다."},
+    {f:"H",s:1,t:"천문·의학·병법 등 실용 학문에도 두루 밝음",w:"훈구는 성리학 밖의 학문과 기술에도 비교적 열려 있었습니다."},
+    {f:"S",s:2,t:"김종직 문하에서 수학함",w:"김종직의 제자들(김굉필, 정여창, 김일손 등)은 사림의 중심입니다."},
+    {f:"S",s:2,t:"『소학』을 평생의 지침으로 삼아 실천함",w:"『소학』 실천은 사림의 상징입니다."},
+    {f:"S",s:1,t:"성리학의 의리와 경학 탐구에 몰두함",w:"문장보다 경학과 의리를 중시한 것이 사림입니다."},
+    {f:"N",t:"성균관 유생 출신"},{f:"N",t:"생원시 합격"},{f:"N",t:"사서(四書)를 두루 읽음"}
+  ],
+  career: [
+    {f:"H",s:1,t:"『동문선』 편찬을 보좌함",w:"『동문선』은 훈구 관료 서거정 등이 펴낸 시문집입니다."},
+    {f:"H",s:1,t:"6조의 판서를 두루 역임함",w:"중앙 고위 관직을 두루 차지한 것은 훈구입니다."},
+    {f:"H",s:1,t:"명 사신 접대에 차출되어 시문으로 응대함",w:"외교 문서와 시문 실력을 내세운 것은 사장을 중시한 훈구입니다."},
+    {f:"S",s:2,t:"사헌부 지평으로 대신의 비리를 탄핵함",w:"3사의 언관이 되어 훈구 대신을 비판한 것은 사림입니다."},
+    {f:"S",s:1,t:"사간원 정언으로 임금께 간언함",w:"사간원 등 언관직은 성종 때 사림의 주 진출처였습니다."},
+    {f:"S",s:2,t:"고향에서 유향소 복립 운동에 참여함",w:"성종 때 사림은 향촌 자치를 위해 유향소를 다시 세우자고 주장했습니다."},
+    {f:"N",t:"지방 고을의 현감으로 근무"},{f:"N",t:"과거 급제 후 승문원에서 근무"},{f:"N",t:"아직 관직 경력 없음"}
+  ],
+  wealth: [
+    {f:"H",s:2,t:"경기 일대에 넓은 농장을 소유함",w:"대토지(농장) 소유는 훈구의 대표 특징입니다."},
+    {f:"H",s:2,t:"공신전과 노비를 하사받음",w:"공신전은 공신에게 내린 토지로, 훈구의 경제 기반입니다."},
+    {f:"S",s:1,t:"향촌에 약간의 전답과 노비 몇 명",w:"사림은 대체로 향촌의 중소 지주였습니다."},
+    {f:"N",t:"따로 신고한 재산 없음"},{f:"N",t:"서책 수백 권"},{f:"N",t:"집 한 채와 텃밭"}
+  ],
+  speech: [
+    {f:"H",s:1,t:"강한 왕권 아래 부국강병을 이뤄야 나라가 바로 섭니다.",w:"중앙집권과 부국강병을 앞세운 것이 훈구입니다."},
+    {f:"H",s:1,t:"불교나 도교도 백성의 마음을 달랜다면 굳이 내칠 것 없지요.",w:"훈구는 다른 사상에 비교적 관대했고, 사림은 이를 배척했습니다."},
+    {f:"H",s:2,t:"공신들의 공을 가볍게 여겨선 아니 됩니다.",w:"공신의 특권을 지키려는 태도는 훈구입니다."},
+    {f:"S",s:2,t:"임금께서는 도덕과 의리로 다스리는 왕도정치를 펴셔야 합니다.",w:"왕도정치는 사림의 정치 이념입니다."},
+    {f:"S",s:2,t:"향약을 널리 시행해 향촌을 교화해야 합니다.",w:"향약 보급은 사림이 추진한 향촌 교화책입니다."},
+    {f:"S",s:2,t:"몇몇 대신이 토지와 권세를 독점하여 백성이 괴롭습니다.",w:"훈구의 대토지 소유와 권력 독점을 비판한 것이 사림입니다."},
+    {f:"S",s:1,t:"도교 제사를 지내는 소격서는 없애야 마땅합니다.",w:"성리학 외의 사상을 배척한 것은 사림입니다."},
+    {f:"N",t:"맡겨 주시면 성심을 다하겠습니다."},{f:"N",t:"백성을 사랑하는 것이 정치의 근본이라 생각합니다."},{f:"N",t:"아직 배울 것이 많습니다."}
+  ],
+  item: [
+    {f:"H",s:2,t:"공신 교서(功臣敎書) 사본",w:"공신 교서는 공신으로 책봉되었다는 문서입니다."},
+    {f:"H",s:1,t:"왕실에서 하사한 비단 도포",w:"왕실과 가까운 권세가는 훈구입니다."},
+    {f:"H",s:1,t:"화려한 시문집 『동문선』 한 질",w:"시문을 중시한 훈구의 취향입니다."},
+    {f:"S",s:2,t:"손때 묻은 『소학』 한 권",w:"『소학』은 사림의 상징적인 책입니다."},
+    {f:"S",s:2,t:"향약 규약 초안",w:"향약은 사림이 보급한 향촌 규약입니다."},
+    {f:"S",s:1,t:"『주자가례』 필사본",w:"성리학적 예법(주자가례)의 실천을 중시한 것은 사림입니다."},
+    {f:"N",t:"붓 한 자루와 벼루"},{f:"N",t:"호패"},{f:"N",t:"부채 하나"}
+  ]
+};
+const SLOT_LABEL = {rec:"추천인",reason:"추천 사유",home:"거주지",family:"가문",study:"학문",career:"경력",wealth:"재산",speech:"발언",item:"소지품"};
+const SLOTS = Object.keys(C);
+const SUR = "김이박정최윤권한신홍유조강성남안송허황".split("");
+const GIV = "숙종굉여일손효선문원경수덕인호상우명지겸석필형준희재".split("");
+const DIFF_NAME = {1:"초급",2:"중급",3:"고급",mix:"혼합"};
+
+/* ===================== 유틸 ===================== */
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hashStr(s){let h=2166136261;for(const c of s){h^=c.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function pick(r,a){return a[Math.floor(r()*a.length)]}
+function shuffle(r,a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fmtTime(sec){sec=Math.max(0,Math.ceil(sec));return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0")}
+const $=id=>document.getElementById(id);
+function readLocal(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function writeLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ===================== 지원자 생성 ===================== */
+// 난이도별: 몇 칸에 파벌 단서를 넣는지, 어떤 세기를 허용하는지
+const DIFF_RULE = {1:{n:6,prefer:2}, 2:{n:4,prefer:0}, 3:{n:3,prefer:1}};
+function makeApplicant(r,diff){
+  const f = r()<0.5?"H":"S";
+  const rule = DIFF_RULE[diff];
+  const slots = shuffle(r,SLOTS.filter(k=>C[k].some(c=>c.f===f)));
+  const chosen = new Set(slots.slice(0,rule.n));
+  const doc = {f,diff,name:pick(r,SUR)+pick(r,GIV)+pick(r,GIV),age:22+Math.floor(r()*30),clues:{}};
+  for(const k of SLOTS){
+    let pool;
+    if(chosen.has(k)){
+      pool = C[k].filter(c=>c.f===f);
+      if(rule.prefer){const p=pool.filter(c=>c.s===rule.prefer);if(p.length)pool=p}
+    } else pool = C[k].filter(c=>c.f==="N");
+    doc.clues[k]=pick(r,pool);
+  }
+  return doc;
+}
+function diffFor(mode,i,total){
+  if(mode!=="mix")return +mode;
+  const p=i/total;
+  return p<0.25?1:p<0.6?2:3;
+}
+
+/* ===================== 상태 ===================== */
+let st=null, timerId=null, mode="normal", testCfg={count:10,time:180,diff:"mix",seed:""};
+let opts=Object.assign({sfx:true,vib:true,theme:""},readLocal("judge.opts",{}));
+let player=readLocal("judge.player","");
+let db=null,userCap=null,canEdit=false;
+
+function applyTheme(){if(opts.theme)document.documentElement.setAttribute("data-theme",opts.theme);else document.documentElement.removeAttribute("data-theme")}
+applyTheme();
+$("nameIn").value=player;
+
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id))}
+function cfg(){return mode==="test"?testCfg:NORMAL}
+function refreshModeUI(){
+  $("testBanner").classList.toggle("hidden",mode!=="test");
+  const c=cfg();
+  $("startMeta").textContent = mode==="test"
+    ? `테스트 모드: ${c.count}명, ${c.time?c.time+"초":"시간 제한 없음"}, ${DIFF_NAME[c.diff]}${c.seed?", 심사번호 "+c.seed:""}`
+    : "일반 모드: 제한 시간 5분, 최대 35명, 명예의 전당 기록";
+}
+
+/* ===================== 소리·진동 ===================== */
+let actx=null;
+function beep(freq,dur,type="sine",vol=.15){
+  if(!opts.sfx)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type;o.frequency.value=freq;g.gain.value=vol;
+    o.connect(g);g.connect(actx.destination);
+    const t=actx.currentTime;g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.start(t);o.stop(t+dur);
+  }catch(e){}
+}
+function sfx(kind){
+  if(kind==="stamp")beep(110,.12,"square",.2);
+  if(kind==="ok"){setTimeout(()=>beep(660,.12),90);setTimeout(()=>beep(880,.16),190)}
+  if(kind==="ng"){setTimeout(()=>beep(220,.25,"sawtooth",.1),90)}
+  if(kind==="event"){beep(523,.1);setTimeout(()=>beep(784,.18),110)}
+}
+function vib(p){if(opts.vib&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+
+/* ===================== 진행 ===================== */
+function validName(v){return /^\d{5}\s+\S.{0,14}$/.test(v.trim())}
+$("startBtn").onclick=()=>{
+  const v=$("nameIn").value.trim().replace(/\s+/g," ");
+  if(!validName(v)){$("nameErr").textContent="학번 다섯 자리, 한 칸 띄우고 이름을 쓰세요. 예) 20314 홍길동";$("nameIn").focus();return}
+  $("nameErr").textContent="";player=v;writeLocal("judge.player",v);
+  prepare();
+};
+$("nameIn").addEventListener("keydown",e=>{if(e.key==="Enter")$("startBtn").click()});
+
+function prepare(){
+  const c=cfg();
+  const seed = c.seed ? String(c.seed) : String(1000+Math.floor(Math.random()*9000));
+  const r=mulberry(hashStr("seed:"+seed));
+  const list=[];for(let i=0;i<c.count;i++)list.push(makeApplicant(r,diffFor(c.diff,i,c.count)));
+  st={seed,list,i:0,page:0,score:0,streak:0,best:0,log:[],left:c.time,timeLimited:c.time>0,
+      t0:0,busy:false,mult:0,evR:mulberry(hashStr("ev:"+seed)),started:false};
+  $("bName").textContent=player;
+  $("bCount").textContent=c.count+"명";
+  $("bTime").textContent=c.time?fmtTime(c.time):"없음";
+  $("bDiff").textContent=c.diff==="mix"?"혼합 (점점 어려워짐)":DIFF_NAME[c.diff];
+  $("bSeed").textContent=seed;
+  show("scrBrief");$("goBtn").focus();
+}
+$("briefBack").onclick=()=>show("scrStart");
+$("goBtn").onclick=()=>{
+  show("scrPlay");st.started=true;renderApplicant(true);
+  st.last=performance.now();
+  clearInterval(timerId);timerId=setInterval(tick,200);
+};
+function tick(){
+  if(!st||!st.timeLimited)return;
+  const now=performance.now();st.left-=(now-st.last)/1000;st.last=now;
+  $("hTime").textContent=fmtTime(st.left);
+  $("hTimeBox").classList.toggle("warn",st.left<=30);
+  if(st.left<=0)finish();
+}
+function currentBonus(){
+  const t=(performance.now()-st.t0)/1000;
+  const speed=Math.max(0,Math.round(50*(1-t/15)));
+  const streak=Math.min(st.streak,5)*10;
+  return {speed,streak,total:(100+speed+streak)*(st.mult>0?2:1)};
+}
+function renderHud(){
+  const c=cfg();
+  $("hScore").textContent=st.score;
+  $("hCount").textContent=Math.min(st.i+1,st.list.length)+"/"+st.list.length;
+  $("hStreak").textContent=st.streak;
+  if(!st.timeLimited){$("hTime").textContent="∞"}
+}
+let bonusTimer=null;
+function updateBonusLine(){
+  if(!st||st.busy)return;
+  const b=currentBonus();
+  $("bonusLine").innerHTML=`다음 정답 +${b.total}`+(st.mult>0?` <span class="ev">· 주상께서 지켜보시는 중 (2배, ${st.mult}명 남음)</span>`:"");
+}
+function renderApplicant(first){
+  const a=st.list[st.i];st.page=0;st.t0=performance.now();st.busy=false;
+  const docEl=$("doc");docEl.classList.remove("leave");
+  if(!first){docEl.classList.remove("enter");void docEl.offsetWidth;docEl.classList.add("enter")}
+  $("seal").className="seal";$("verdict").className="verdict";
+  renderPage();renderHud();
+  $("stampH").disabled=$("stampS").disabled=false;
+  clearInterval(bonusTimer);bonusTimer=setInterval(updateBonusLine,250);updateBonusLine();
+}
+function field(k,a){return `<div class="field"><dt>${SLOT_LABEL[k]}</dt><dd>${esc(a.clues[k].t)}</dd></div>`}
+function renderPage(){
+  const a=st.list[st.i],p=st.page;
+  const head=`<p class="applicant"><b>${esc(a.name)}</b>${a.age}세 · 심사 ${st.i+1}번</p>`;
+  let title,sub,body;
+  if(p===0){
+    title="천장(薦狀)";sub="추천서";
+    body=head+`<p class="letter">삼가 아뢰옵니다.\n${esc(a.clues.reason.t)}\n부디 살피시어 쓰시옵소서.<span class="sign">추천인 ${esc(a.clues.rec.t)}</span></p>`;
+  }else if(p===1){
+    title="이력(履歷)";sub="지원자 신상";
+    body=head+`<dl style="margin:0">${["home","family","study","career","wealth"].map(k=>field(k,a)).join("")}</dl>`;
+  }else{
+    title="면담 기록";sub="심사관 앞 문답";
+    body=head+`<p class="speech">“${esc(a.clues.speech.t)}”</p><dl style="margin:0">${field("item",a)}</dl>`;
+  }
+  $("docTitle").textContent=title;$("docSub").textContent=sub+" "+(p+1)+"/3";
+  $("docBody").innerHTML=body;$("docBody").scrollTop=0;
+  $("prevPg").disabled=p===0;$("nextPg").disabled=p===2;
+  document.querySelectorAll("#dots i").forEach((d,i)=>d.classList.toggle("on",i===p));
+}
+function turn(d){if(!st||st.busy)return;const n=st.page+d;if(n<0||n>2)return;st.page=n;renderPage()}
+$("prevPg").onclick=()=>turn(-1);$("nextPg").onclick=()=>turn(1);
+// 좌우 스와이프
+(function(){let x0=null;const el=$("doc");
+  el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
+  el.addEventListener("touchend",e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)turn(dx<0?1:-1);x0=null});
+})();
+
+function judge(choice){
+  if(!st||st.busy||!$("scrPlay").classList.contains("on"))return;
+  st.busy=true;clearInterval(bonusTimer);
+  $("stampH").disabled=$("stampS").disabled=true;
+  const a=st.list[st.i];const ok=choice===a.f;const b=currentBonus();
+  const t=(performance.now()-st.t0)/1000;
+  const seal=$("seal");seal.textContent=choice==="H"?"勳":"士";seal.className="seal "+(choice==="H"?"h":"s");
+  void seal.offsetWidth;seal.classList.add("show");
+  sfx("stamp");vib(30);
+  let gained=0;
+  if(ok){gained=b.total;st.score+=gained;st.streak++;st.best=Math.max(st.best,st.streak);sfx("ok")}
+  else{st.streak=0;sfx("ng");vib([60,40,60])}
+  if(st.mult>0)st.mult--;
+  st.log.push({a,choice,ok,t,gained});
+  const v=$("verdict");
+  v.className="verdict "+(ok?"ok":"ng");
+  v.textContent=ok?`정답! ${a.f==="H"?"훈구":"사림"}입니다. +${gained}`:`오답. 이 지원자는 ${a.f==="H"?"훈구":"사림"}입니다.`;
+  requestAnimationFrame(()=>v.classList.add("show"));
+  renderHud();$("bonusLine").textContent="";
+  setTimeout(()=>{
+    if(!st||!$("scrPlay").classList.contains("on"))return;
+    $("doc").classList.add("leave");
+    setTimeout(()=>{
+      if(!st||!$("scrPlay").classList.contains("on"))return;
+      st.i++;
+      if(st.i>=st.list.length){finish();return}
+      maybeEvent();
+      renderApplicant(false);
+    },380);
+  },ok?650:1300);
+}
+$("stampH").onclick=()=>judge("H");$("stampS").onclick=()=>judge("S");
+document.addEventListener("keydown",e=>{
+  if(document.querySelector(".modal:not(.hidden)")){if(e.key==="Escape")closeModals();return}
+  if(!$("scrPlay").classList.contains("on"))return;
+  const k=e.key.toLowerCase();
+  if(k==="h"||k==="ㅗ")judge("H");else if(k==="s"||k==="ㄴ")judge("S");
+  else if(e.key==="ArrowRight")turn(1);else if(e.key==="ArrowLeft")turn(-1);
+});
+
+/* 뜻밖의 사건 */
+function maybeEvent(){
+  if(st.i<4||st.i%5!==0)return;
+  if(st.evR()>0.6)return;
+  const evs=[{t:"주상께서 친히 지켜보십니다",d:"다음 3명은 점수가 2배입니다.",fn:()=>{st.mult=3}}];
+  if(st.timeLimited)evs.push({t:"내관이 차를 올렸습니다",d:"잠시 숨을 돌립니다. 시간 +15초.",fn:()=>{st.left+=15}});
+  const ev=pick(st.evR,evs);ev.fn();
+  $("evT").textContent=ev.t;$("evD").textContent=ev.d;
+  const el=$("event");el.classList.add("show");sfx("event");
+  setTimeout(()=>el.classList.remove("show"),2600);
+}
+
+/* ===================== 결과 ===================== */
+async function finish(){
+  if(!st||!$("scrPlay").classList.contains("on"))return;
+  clearInterval(timerId);clearInterval(bonusTimer);
+  const log=st.log,n=log.length,correct=log.filter(l=>l.ok).length;
+  $("rWho").textContent=`${player} · 심사번호 ${st.seed}${mode==="test"?" · 테스트":""}`;
+  $("rScore").textContent=st.score;
+  $("rCorrect").textContent=`${correct} / ${n}`;
+  $("rAcc").textContent=n?Math.round(correct/n*100)+"%":"-";
+  $("rStreak").textContent=st.best;
+  $("rAvg").textContent=n?(log.reduce((s,l)=>s+l.t,0)/n).toFixed(1)+"초":"-";
+  // 하이라이트
+  const hi=[];
+  const fast=log.filter(l=>l.ok).sort((x,y)=>x.t-y.t)[0];
+  if(fast)hi.push(`가장 빠른 정답: ${esc(fast.a.name)} (${fast.t.toFixed(1)}초, +${fast.gained})`);
+  const hard=log.filter(l=>l.ok&&l.a.diff===3).length,hardN=log.filter(l=>l.a.diff===3).length;
+  if(hardN)hi.push(`고급 지원자 ${hardN}명 중 ${hard}명 정답`);
+  const hm=log.filter(l=>l.a.f==="H"),sm=log.filter(l=>l.a.f==="S");
+  if(hm.length)hi.push(`훈구 정답률 ${Math.round(hm.filter(l=>l.ok).length/hm.length*100)}%, 사림 정답률 ${sm.length?Math.round(sm.filter(l=>l.ok).length/sm.length*100):0}%`);
+  if(n<st.list.length)hi.push(`${st.list.length}명 중 ${n}명을 심사하고 시간이 다 되었습니다.`);
+  $("rHigh").innerHTML=hi.length?hi.map(h=>`<p style="margin:4px 0">${h}</p>`).join(""):"<p>심사한 지원자가 없습니다.</p>";
+  // 오답 복기
+  const wrong=log.filter(l=>!l.ok);
+  $("rReview").innerHTML=wrong.length?wrong.map(l=>{
+    const a=l.a,f=a.f;
+    const items=SLOTS.filter(k=>a.clues[k].f===f).map(k=>`<li><b>${SLOT_LABEL[k]}</b> ${esc(a.clues[k].t)}<br><span>${esc(a.clues[k].w)}</span></li>`).join("");
+    return `<div class="review"><h4>${esc(a.name)} <span class="tag ${f==="H"?"h":"s"}">정답 ${f==="H"?"훈구":"사림"}</span> <span class="small" style="color:var(--ink-soft)">${DIFF_NAME[a.diff]}</span></h4><ul>${items}</ul></div>`;
+  }).join(""):`<p class="perfect">틀린 지원자가 없습니다.</p>`;
+  show("scrResult");
+  document.querySelector(".result").scrollTop=0;
+  const sv=$("rSave");
+  if(mode==="test"){sv.classList.add("hidden")}
+  else{
+    sv.classList.remove("hidden");sv.textContent="명예의 전당에 기록하는 중…";
+    sv.textContent=await saveScore({score:st.score,correct,total:n,best:st.best,seed:st.seed});
+  }
+  st=null;
+}
+$("againBtn").onclick=()=>prepare();
+$("homeBtn").onclick=()=>{show("scrStart");refreshModeUI()};
+
+/* ===================== 명예의 전당 (공유 db) ===================== */
+function studentKey(name){const [sid,...rest]=name.split(" ");return "s_"+sid+"_"+hashStr(rest.join(" ")).toString(36)}
+async function saveScore(r){
+  const mine=readLocal("judge.best",{});
+  const key=studentKey(player);
+  if(!mine[key]||r.score>mine[key])mine[key]=r.score;writeLocal("judge.best",mine);
+  if(!db)return "명예의 전당에 연결되지 않아 이 기기에만 최고 기록을 남겼습니다.";
+  const [sid,...rest]=player.split(" ");
+  try{
+    const ref=db.collection("scores").doc(key);
+    const cur=await ref.get();
+    const old=cur.exists?cur.data():null;
+    if(old&&typeof old.score==="number"&&old.score>=r.score)return `명예의 전당 기록 ${old.score}점이 더 높아 그대로 둡니다.`;
+    await ref.set({sid,name:rest.join(" "),score:r.score,correct:r.correct,total:r.total,best:r.best,seed:r.seed,at:new Date().toISOString()});
+    return old?"새 최고 기록! 명예의 전당을 갱신했습니다.":"명예의 전당에 기록했습니다.";
+  }catch(e){
+    return "명예의 전당에 기록할 권한이 없어 이 기기에만 남겼습니다. 선생님께 이 페이지의 참여 권한을 요청하세요.";
+  }
+}
+async function loadHof(){
+  const body=$("hofBody"),note=$("hofNote");
+  if(!db){body.innerHTML="<p>명예의 전당에 연결되지 않았습니다.</p>";note.textContent="Claude 앱이나 claude.ai에서 로그인한 상태로 이 페이지를 열어야 순위를 볼 수 있습니다.";return}
+  body.innerHTML="<p>불러오는 중…</p>";note.textContent="";
+  try{
+    const snap=await db.collection("scores").orderBy("score","desc").limit(20).get();
+    if(snap.empty){body.innerHTML="<p>아직 기록이 없습니다. 첫 번째 이름을 올려 보세요.</p>";return}
+    const me=player?studentKey(player):"";
+    body.innerHTML=`<table class="hof"><thead><tr><th>순위</th><th>학번</th><th>이름</th><th>점수</th><th>정답</th></tr></thead><tbody>${
+      snap.docs.map((d,i)=>{const v=d.data()||{};return `<tr class="${d.id===me?"me":""}"><td>${i+1}</td><td>${esc(v.sid||"")}</td><td>${esc(v.name||"")}</td><td>${esc(v.score??"")}</td><td>${esc((v.correct??"")+"/"+(v.total??""))}</td></tr>`}).join("")
+    }</tbody></table>`;
+    note.textContent="학생마다 최고 점수 하나만 올라갑니다.";
+  }catch(e){body.innerHTML="<p>순위를 불러오지 못했습니다. 새로고침을 눌러 다시 시도하세요.</p>"}
+}
+
+/* ===================== 모달 ===================== */
+function openModal(id){$(id).classList.remove("hidden");const f=$(id).querySelector("input,button:not(.x),select");if(f)f.focus()}
+function closeModals(){document.querySelectorAll(".modal").forEach(m=>m.classList.add("hidden"))}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeModals);
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModals()}));
+$("hofBtn").onclick=$("rHofBtn").onclick=()=>{openModal("mHof");loadHof()};
+$("hofRefresh").onclick=loadHof;
+$("setBtn").onclick=()=>{$("optSfx").checked=opts.sfx;$("optVib").checked=opts.vib;$("optTheme").value=opts.theme;openModal("mSet")};
+$("setOk").onclick=()=>{opts={sfx:$("optSfx").checked,vib:$("optVib").checked,theme:$("optTheme").value};writeLocal("judge.opts",opts);applyTheme();closeModals()};
+
+/* 교사용 */
+$("teachBtn").onclick=()=>{openModal("mTeach");if(!$("tPanel").classList.contains("hidden"))syncSeg()};
+$("tOpen").onclick=()=>{
+  if($("tPw").value===TEACHER_PASSWORD){$("tLock").classList.add("hidden");$("tPanel").classList.remove("hidden");$("tPwErr").textContent="";syncSeg()}
+  else $("tPwErr").textContent="비밀번호가 맞지 않습니다.";
+};
+$("tPw").addEventListener("keydown",e=>{if(e.key==="Enter")$("tOpen").click()});
+function syncSeg(){
+  document.querySelectorAll("#tPanel .seg").forEach(g=>{const k=g.dataset.key;g.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===String(testCfg[k]))))});
+  $("tSeed").value=testCfg.seed;
+}
+document.querySelectorAll("#tPanel .seg").forEach(g=>g.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;const k=g.dataset.key;
+  testCfg[k]=k==="diff"?b.dataset.v:+b.dataset.v;syncSeg();
+}));
+$("tStart").onclick=()=>{
+  testCfg.seed=$("tSeed").value.replace(/\D/g,"");
+  mode="test";closeModals();refreshModeUI();
+  if(validName($("nameIn").value)){$("startBtn").click()}else{show("scrStart");$("nameErr").textContent="테스트 모드입니다. 학번과 이름을 넣고 심사 시작을 누르세요.";$("nameIn").focus()}
+};
+$("tNormal").onclick=()=>{mode="normal";closeModals();show("scrStart");refreshModeUI()};
+$("tBal").onclick=()=>{
+  const rows=[1,2,3].map(d=>{
+    const r=mulberry(1234+d);let h=0,s1=0,s2=0,n=600;const slotUse={};
+    for(let i=0;i<n;i++){const a=makeApplicant(r,d);if(a.f==="H")h++;
+      for(const k of SLOTS){const c=a.clues[k];if(c.f!=="N"){c.s===2?s2++:s1++;slotUse[k]=(slotUse[k]||0)+1}}}
+    return {d,h:Math.round(h/n*100),s:100-Math.round(h/n*100),avg:((s1+s2)/n).toFixed(1),strong:((s2)/n).toFixed(1)};
+  });
+  const pool=SLOTS.map(k=>{const H=C[k].filter(c=>c.f==="H").length,S=C[k].filter(c=>c.f==="S").length,N=C[k].filter(c=>c.f==="N").length;return `<tr><td>${SLOT_LABEL[k]}</td><td>${H}</td><td>${S}</td><td>${N}</td></tr>`}).join("");
+  $("tBalOut").innerHTML=`<table class="bal"><thead><tr><th>난이도</th><th>훈구</th><th>사림</th><th>단서 수</th><th>뚜렷한 단서</th></tr></thead><tbody>${
+    rows.map(r=>`<tr><td>${DIFF_NAME[r.d]}</td><td>${r.h}%</td><td>${r.s}%</td><td>${r.avg}</td><td>${r.strong}</td></tr>`).join("")}</tbody></table>
+    <table class="bal" style="margin-top:12px"><thead><tr><th>항목별 단서 수</th><th>훈구</th><th>사림</th><th>중립</th></tr></thead><tbody>${pool}</tbody></table>`;
+};
+$("tReset").onclick=async()=>{
+  const m=$("tResetMsg");
+  if(!db){m.textContent="명예의 전당에 연결되지 않았습니다.";return}
+  if(!canEdit){m.textContent="이 페이지의 소유자나 편집자만 순위를 지울 수 있습니다.";return}
+  if(!confirm("명예의 전당 기록을 모두 지울까요? 되돌릴 수 없습니다."))return;
+  m.style.color="var(--ink-soft)";m.textContent="지우는 중…";
+  try{
+    const snap=await db.collection("scores").limit(1000).get();
+    for(const d of snap.docs){await db.collection("scores").doc(d.id).delete()}
+    m.textContent=`기록 ${snap.size}개를 지웠습니다.`;
+  }catch(e){m.style.color="";m.textContent="지우지 못했습니다. 잠시 뒤 다시 시도하세요."}
+};
+
+/* ===================== 런타임 연결 ===================== */
+(async function(){
+  if(!window.claude||!window.claude.use)return;
+  try{db=await window.claude.use("db")}catch(e){db=null}
+  try{userCap=await window.claude.use("user");if(userCap)canEdit=!!(await userCap.canEdit())}catch(e){}
+})();
+refreshModeUI();
+</script>
+</body>
+</html>
